@@ -38,25 +38,17 @@ func renderGoFile(proto *Proto) (string, error) {
 	b.WriteString("package " + pkg + "\n\n")
 	b.WriteString("import (\n")
 	b.WriteString("\t\"encoding/json\"\n")
-	b.WriteString("\t\"math\"\n")
 	b.WriteString("\tbp \"github.com/tsingson/bitproto/lib/go\"\n")
 	b.WriteString(")\n\n")
 	b.WriteString("var jsonMarshal = json.Marshal\n")
 	b.WriteString("var _ = bp.Useless\n\n")
-	b.WriteString("const BP_FLOAT_SCALE float64 = 100000000.0\n\n")
-	b.WriteString("func BpFloatToInt32(v float64) int32 {\n")
-	b.WriteString("\ts := v * BP_FLOAT_SCALE\n")
-	b.WriteString("\tif s > float64(math.MaxInt32) {\n")
-	b.WriteString("\t\treturn math.MaxInt32\n")
-	b.WriteString("\t}\n")
-	b.WriteString("\tif s < float64(math.MinInt32) {\n")
-	b.WriteString("\t\treturn math.MinInt32\n")
-	b.WriteString("\t}\n")
-	b.WriteString("\treturn int32(math.Round(s))\n")
-	b.WriteString("}\n\n")
-	b.WriteString("func BpInt32ToFloat(v int32) float64 {\n")
-	b.WriteString("\treturn float64(v) / BP_FLOAT_SCALE\n")
-	b.WriteString("}\n\n")
+
+	for _, c := range proto.Consts {
+		b.WriteString(fmt.Sprintf("const %s %s = %s\n", c.Name, c.Type, c.Value))
+	}
+	if len(proto.Consts) > 0 {
+		b.WriteString("\n")
+	}
 
 	for _, a := range proto.Aliases {
 		ts, err := idx.goType(a.Type)
@@ -168,13 +160,13 @@ func (i *index) renderGoMessageMethods(b *strings.Builder, m Message) error {
 			b.WriteString(fmt.Sprintf("func (m *%s) Set%s%sAt(i int, v float64) bool {\n", mn, name, suffix))
 			b.WriteString(fmt.Sprintf("\tif i < 0 || i >= %d {\n", resolved.ArraySize))
 			b.WriteString("\t\treturn false\n\t}\n")
-			b.WriteString(fmt.Sprintf("\t%s[i] = %s(BpFloatToInt32(v))\n", target, elemCast))
+			b.WriteString(fmt.Sprintf("\t%s[i] = %s(bp.BpFloatToInt32(v))\n", target, elemCast))
 			b.WriteString("\treturn true\n")
 			b.WriteString("}\n\n")
 			b.WriteString(fmt.Sprintf("func (m *%s) Get%s%sAt(i int) (float64, bool) {\n", mn, name, suffix))
 			b.WriteString(fmt.Sprintf("\tif i < 0 || i >= %d {\n", resolved.ArraySize))
 			b.WriteString("\t\treturn 0, false\n\t}\n")
-			b.WriteString(fmt.Sprintf("\treturn BpInt32ToFloat(int32(%s[i])), true\n", target))
+			b.WriteString(fmt.Sprintf("\treturn bp.BpInt32ToFloat(int32(%s[i])), true\n", target))
 			b.WriteString("}\n\n")
 		} else {
 			castType, err := i.goCastTypeForField(f.Type, resolved)
@@ -182,10 +174,10 @@ func (i *index) renderGoMessageMethods(b *strings.Builder, m Message) error {
 				return err
 			}
 			b.WriteString(fmt.Sprintf("func (m *%s) Set%s%s(v float64) {\n", mn, name, suffix))
-			b.WriteString(fmt.Sprintf("\t%s = %s(BpFloatToInt32(v))\n", target, castType))
+			b.WriteString(fmt.Sprintf("\t%s = %s(bp.BpFloatToInt32(v))\n", target, castType))
 			b.WriteString("}\n\n")
 			b.WriteString(fmt.Sprintf("func (m *%s) Get%s%s() float64 {\n", mn, name, suffix))
-			b.WriteString(fmt.Sprintf("\treturn BpInt32ToFloat(int32(%s))\n", target))
+			b.WriteString(fmt.Sprintf("\treturn bp.BpInt32ToFloat(int32(%s))\n", target))
 			b.WriteString("}\n\n")
 		}
 	}

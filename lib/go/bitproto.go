@@ -9,8 +9,27 @@
 //   - No dynamic function construction.
 package bitproto
 
+import "math"
+
 // Exported for generated go files to reference to avoid bp imported but not used error.
 var Useless = false
+
+const BP_FLOAT_SCALE float64 = 100000000.0
+
+// BpFloatToInt32 converts fixed-point float/double values to int32 storage.
+func BpFloatToInt32(v float64) int32 {
+	s := v * BP_FLOAT_SCALE
+	if s > float64(math.MaxInt32) {
+		return math.MaxInt32
+	}
+	if s < float64(math.MinInt32) {
+		return math.MinInt32
+	}
+	return int32(math.Round(s))
+}
+
+// BpInt32ToFloat converts fixed-point int32 storage back to float64.
+func BpInt32ToFloat(v int32) float64 { return float64(v) / BP_FLOAT_SCALE }
 
 // Flag
 type Flag = int

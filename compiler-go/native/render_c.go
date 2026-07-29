@@ -65,16 +65,13 @@ func renderHeader(proto *Proto) (string, error) {
 	b.WriteString("#include <stdbool.h>\n")
 	b.WriteString("#endif\n\n")
 	b.WriteString("#include \"bitproto.h\"\n\n")
-	b.WriteString("#define BP_FLOAT_SCALE 100000000.0\n")
-	b.WriteString("static inline int32_t BpFloatToInt32(double v) {\n")
-	b.WriteString("    double s = v * BP_FLOAT_SCALE;\n")
-	b.WriteString("    if (s > (double)INT32_MAX) { return INT32_MAX; }\n")
-	b.WriteString("    if (s < (double)INT32_MIN) { return INT32_MIN; }\n")
-	b.WriteString("    return (int32_t)(s >= 0 ? (s + 0.5) : (s - 0.5));\n")
-	b.WriteString("}\n")
-	b.WriteString("static inline double BpInt32ToFloat(int32_t v) {\n")
-	b.WriteString("    return ((double)v) / BP_FLOAT_SCALE;\n")
-	b.WriteString("}\n\n")
+
+	for _, c := range proto.Consts {
+		b.WriteString(fmt.Sprintf("#define %s %s\n", c.Name, c.Value))
+	}
+	if len(proto.Consts) > 0 {
+		b.WriteString("\n")
+	}
 
 	for _, a := range proto.Aliases {
 		ts, err := idx.cTypeDecl(a.Type, a.Name)
