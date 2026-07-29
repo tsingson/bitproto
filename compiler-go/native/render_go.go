@@ -38,8 +38,10 @@ func renderGoFile(proto *Proto) (string, error) {
 	b.WriteString("package " + pkg + "\n\n")
 	b.WriteString("import (\n")
 	b.WriteString("\t\"encoding/json\"\n")
+	b.WriteString("\t\"strconv\"\n")
 	b.WriteString("\tbp \"github.com/tsingson/bitproto/lib/go\"\n")
 	b.WriteString(")\n\n")
+	b.WriteString("var formatInt = strconv.FormatInt\n")
 	b.WriteString("var jsonMarshal = json.Marshal\n")
 	b.WriteString("var _ = bp.Useless\n\n")
 
@@ -88,6 +90,16 @@ func renderGoFile(proto *Proto) (string, error) {
 		}
 		b.WriteString(fmt.Sprintf("func (m %s) BpProcessor() bp.Processor {\n", en))
 		b.WriteString(fmt.Sprintf("\treturn bp.NewEnumProcessor(bp.NewUint(%d))\n", nbits))
+		b.WriteString("}\n\n")
+		b.WriteString(fmt.Sprintf("func (v %s) String() string {\n", en))
+		b.WriteString("\tswitch v {\n")
+		for _, f := range e.Fields {
+			b.WriteString(fmt.Sprintf("\tcase %d:\n", f.Value))
+			b.WriteString(fmt.Sprintf("\t\treturn %q\n", f.Name))
+		}
+		b.WriteString("\tdefault:\n")
+		b.WriteString(fmt.Sprintf("\t\treturn %q+formatInt(int64(v), 10)+\")\"\n", en+"("))
+		b.WriteString("\t}\n")
 		b.WriteString("}\n\n")
 	}
 
@@ -203,7 +215,11 @@ func (i *index) renderGoMessageMethods(b *strings.Builder, m Message) error {
 		b.WriteString(fmt.Sprintf("\t\tbp.NewMessageFieldProcessor(%d, %s),\n", f.Number, expr))
 	}
 	b.WriteString("\t}\n")
-	b.WriteString(fmt.Sprintf("\treturn bp.NewMessageProcessor(false, %d, fieldDescriptors)\n", bits))
+	extensible := "false"
+	if m.Extensible {
+		extensible = "true"
+	}
+	b.WriteString(fmt.Sprintf("\treturn bp.NewMessageProcessor(%s, %d, fieldDescriptors)\n", extensible, bits))
 	b.WriteString("}\n\n")
 
 	b.WriteString(fmt.Sprintf("func (m *%s) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {\n", mn))

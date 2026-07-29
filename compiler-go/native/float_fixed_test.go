@@ -174,7 +174,7 @@ const NAME = "bitproto"
 	cs := string(cb)
 	gs := string(gb)
 
-	if !strings.Contains(hs, "#ifndef __BITPROTO_NATIVE_SAMPLE_H__") {
+	if !strings.Contains(hs, "#ifndef __BITPROTO__SAMPLE_H__") {
 		t.Fatalf("missing C header guard")
 	}
 	if !strings.Contains(hs, "#define MAX_VALUE 32") {

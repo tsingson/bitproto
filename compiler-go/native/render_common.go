@@ -1,6 +1,7 @@
 package native
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
 )
@@ -54,4 +55,43 @@ func (i *index) fixedFloatKindForType(t TypeExpr) (string, TypeExpr, bool, error
 		return resolved.Name, resolved, true, nil
 	}
 	return "", resolved, false, nil
+}
+
+// toSnakeCase converts a CamelCase or mixed identifier to snake_case.
+func toSnakeCase(s string) string {
+	s = strings.ReplaceAll(s, "-", "_")
+	var out []rune
+	runes := []rune(s)
+	for i, r := range runes {
+		if unicode.IsUpper(r) {
+			if i > 0 && (unicode.IsLower(runes[i-1]) ||
+				(i+1 < len(runes) && unicode.IsLower(runes[i+1]))) {
+				out = append(out, '_')
+			}
+			out = append(out, unicode.ToLower(r))
+		} else {
+			out = append(out, r)
+		}
+	}
+	result := string(out)
+	for strings.Contains(result, "__") {
+		result = strings.ReplaceAll(result, "__", "_")
+	}
+	return strings.Trim(result, "_")
+}
+
+func msgJsonFormatterName(name string) string {
+	return "BpNativeJsonFormat" + toPascal(name)
+}
+
+func aliasJsonFormatterName(name string) string {
+	return "BpNativeJsonFormat" + toPascal(name)
+}
+
+func arrayJsonFormatterNameForAlias(name string) string {
+	return "BpNativeJsonFormatArray" + toPascal(name)
+}
+
+func arrayJsonFormatterNameForField(msg string, fieldNum int) string {
+	return fmt.Sprintf("BpNativeJsonFormatArray%s%d", toPascal(msg), fieldNum)
 }

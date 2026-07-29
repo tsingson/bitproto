@@ -174,7 +174,9 @@ func (p *parser) parseMessage() (Message, error) {
 	if err != nil {
 		return Message{}, err
 	}
+	extensible := false
 	if p.cur.kind == tokenQuote {
+		extensible = true
 		if err := p.expect(tokenQuote); err != nil {
 			return Message{}, err
 		}
@@ -182,7 +184,7 @@ func (p *parser) parseMessage() (Message, error) {
 	if err := p.expect(tokenLBrace); err != nil {
 		return Message{}, err
 	}
-	m := Message{Name: name}
+	m := Message{Name: name, Extensible: extensible}
 	for p.cur.kind != tokenRBrace {
 		if p.cur.kind == tokenIdent {
 			switch p.cur.lit {
@@ -270,8 +272,14 @@ func (p *parser) parseTypeExpr() (TypeExpr, error) {
 			return TypeExpr{}, err
 		}
 		t.ArraySize = n
+		if p.cur.kind == tokenQuote {
+			t.Extensible = true
+			if err := p.expect(tokenQuote); err != nil {
+				return TypeExpr{}, err
+			}
+		}
 	}
-	if p.cur.kind == tokenQuote {
+	if p.cur.kind == tokenQuote && !t.Extensible {
 		if err := p.expect(tokenQuote); err != nil {
 			return TypeExpr{}, err
 		}

@@ -49,6 +49,25 @@ func renderPyFile(proto *Proto) (string, error) {
 	b.WriteString("def bp_int32_to_float(v):\n")
 	b.WriteString("    return float(v) / BP_FLOAT_SCALE\n\n")
 
+	for _, c := range proto.Consts {
+		pyType := c.Type
+		pyValue := c.Value
+		switch c.Type {
+		case "bool":
+			if pyValue == "true" {
+				pyValue = "True"
+			} else {
+				pyValue = "False"
+			}
+		case "string":
+			pyType = "str"
+		}
+		b.WriteString(fmt.Sprintf("%s: %s = %s\n", c.Name, pyType, pyValue))
+	}
+	if len(proto.Consts) > 0 {
+		b.WriteString("\n")
+	}
+
 	for _, a := range proto.Aliases {
 		ts, err := idx.pyType(a.Type)
 		if err != nil {

@@ -67,10 +67,14 @@ jobs:
       if: "matrix.python == '3.11'"
 
     - name: Run tests
+      env:
+        GOFLAGS: -mod=mod
       run: |
         make test --no-print-directory -s
 
     - name: Verify go-compiler outputs and interop
+      env:
+        GOFLAGS: -mod=mod
       run: |
         make -C compiler verify-go-compiler-c --no-print-directory -s
         make -C compiler verify-go-compiler-go --no-print-directory -s
@@ -78,11 +82,15 @@ jobs:
       if: "matrix.python == '3.11'"
 
     - name: Verify TCP/IP C<->Go framing case
+      env:
+        GOFLAGS: -mod=mod
       run: |
         pytest tests/test_encoding/test_tcpip.py -v -s -x
       if: "matrix.python == '3.11'"
 
     - name: Verify native c/go/py three-end interop stress
+      env:
+        GOFLAGS: -mod=mod
       run: |
         python tests/test_encoding/test_native_interop.py
       if: "matrix.python == '3.11'"

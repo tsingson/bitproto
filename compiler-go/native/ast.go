@@ -31,8 +31,9 @@ type Const struct {
 }
 
 type Message struct {
-	Name   string
-	Fields []MessageField
+	Name       string
+	Extensible bool
+	Fields     []MessageField
 }
 
 type MessageField struct {
@@ -42,8 +43,9 @@ type MessageField struct {
 }
 
 type TypeExpr struct {
-	Name      string
-	ArraySize int
+	Name       string
+	ArraySize  int
+	Extensible bool // true when array type is marked extensible with '
 }
 
 func (t TypeExpr) IsArray() bool {
