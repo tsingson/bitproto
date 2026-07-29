@@ -1,0 +1,7 @@
+proto float_double
+
+message Reading {
+    float temperature = 1
+    double humidity = 2
+    float[3] history = 3
+}

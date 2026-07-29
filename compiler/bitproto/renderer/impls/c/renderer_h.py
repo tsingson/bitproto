@@ -251,10 +251,6 @@ class BlockMessageStruct(BlockBindMessage[F], BlockWrapper[F]):
     @override(BlockWrapper)
     def after(self) -> None:
         self.push("}")
-        option_name = "c.struct_packing_alignment"
-        alignment = self.bound.get_option_as_int_or_raise(option_name)
-        if alignment > 0:
-            self.push_string(f"__attribute__((packed, aligned({alignment})))")
         self.push_string(";", separator="")
 
 
@@ -269,7 +265,7 @@ class BlockMessageEncoderBase(BlockBindMessage[F]):
 
     @cached_property
     def function_signature(self) -> str:
-        return f"int {self.function_name}({self.message_type} *m, unsigned char *s)"
+        return f"size_t {self.function_name}({self.message_type} *m, unsigned char *s)"
 
 
 class BlockMessageEncoderFunctionDeclaration(BlockMessageEncoderBase):
@@ -290,7 +286,7 @@ class BlockMessageDecoderBase(BlockBindMessage[F]):
 
     @cached_property
     def function_signature(self) -> str:
-        return f"int {self.function_name}({self.message_type} *m, unsigned char *s)"
+        return f"size_t {self.function_name}({self.message_type} *m, unsigned char *s)"
 
 
 class BlockMessageDecoderFunctionDeclaration(BlockMessageDecoderBase):

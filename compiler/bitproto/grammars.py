@@ -140,6 +140,8 @@ base_type : BOOL_TYPE
           | UINT_TYPE
           | INT_TYPE
           | BYTE_TYPE
+          | FLOAT_TYPE
+          | DOUBLE_TYPE
 """
 
 r_type_reference = """

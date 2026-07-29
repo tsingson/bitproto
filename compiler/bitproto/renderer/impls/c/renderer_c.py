@@ -337,7 +337,7 @@ class BlockMessageEncoder(BlockMessageEncoderBase):
             "struct BpProcessorContext ctx = BpProcessorContext(true, s);", indent=4
         )
         self.push(f"{processor_name}((void *)m, &ctx);", indent=4)
-        self.push("return 0;", indent=4)
+        self.push(f"return {self.message_size_constant_name};", indent=4)
         self.push("}")
 
 
@@ -350,7 +350,7 @@ class BlockMessageDecoder(BlockMessageDecoderBase):
             "struct BpProcessorContext ctx = BpProcessorContext(false, s);", indent=4
         )
         self.push(f"{processor_name}((void *)m, &ctx);", indent=4)
-        self.push("return 0;", indent=4)
+        self.push(f"return {self.message_size_constant_name};", indent=4)
         self.push("}")
 
 
@@ -440,7 +440,7 @@ class BlockMessageEncoderOpMode(BlockMessageEncoderBase):
         endian = self._get_ctx_or_raise().optimization_mode_endian
         self.push(f"{self.function_signature} {{")
         self._push_body(endian)
-        self.push("return 0;", indent=4)
+        self.push(f"return {self.message_size_constant_name};", indent=4)
         self.push("}")
 
     def _push_body(self, endian: str) -> None:
@@ -474,7 +474,7 @@ class BlockMessageDecoderOpMode(BlockMessageDecoderBase):
         endian = self._get_ctx_or_raise().optimization_mode_endian
         self.push(f"{self.function_signature} {{")
         self._push_body(endian)
-        self.push("return 0;", indent=4)
+        self.push(f"return {self.message_size_constant_name};", indent=4)
         self.push("}")
 
     def _push_body(self, endian: str) -> None:

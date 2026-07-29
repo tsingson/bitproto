@@ -59,6 +59,8 @@ class Lexer:
         "UINT_TYPE",
         "INT_TYPE",
         "BYTE_TYPE",
+        "FLOAT_TYPE",
+        "DOUBLE_TYPE",
         # Literals
         "HEX_LITERAL",
         "INT_LITERAL",
@@ -161,6 +163,16 @@ class Lexer:
     def t_BYTE_TYPE(self, t: LexToken) -> LexToken:
         r"\bbyte\b"
         t.value = Byte(token=t.value, lineno=t.lineno, filepath=self.current_filepath())
+        return t
+
+    def t_FLOAT_TYPE(self, t: LexToken) -> LexToken:
+        r"\bfloat\b"
+        t.value = Int(cap=32, token=t.value, lineno=t.lineno, filepath=self.current_filepath())
+        return t
+
+    def t_DOUBLE_TYPE(self, t: LexToken) -> LexToken:
+        r"\bdouble\b"
+        t.value = Int(cap=32, token=t.value, lineno=t.lineno, filepath=self.current_filepath())
         return t
 
     def t_HEX_LITERAL(self, t: LexToken) -> LexToken:

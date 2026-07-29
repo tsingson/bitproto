@@ -64,7 +64,7 @@ static inline bool BpIsBaseIntegerType(int flag) {
 
 // BpEndecodeMessage process given message at data with provided message
 // descriptor. It iterates all message fields to process.
-void BpEndecodeMessage(struct BpMessageDescriptor *descriptor,
+void BpEndecodeMessage(const struct BpMessageDescriptor *descriptor,
                        struct BpProcessorContext *ctx, void *data) {
     // Keep current number of bits total processed.
     int i = ctx->i;
@@ -98,7 +98,7 @@ void BpEndecodeMessage(struct BpMessageDescriptor *descriptor,
 }
 
 // BpEndecodeMessageField dispatch the process by given message field's type.
-void BpEndecodeMessageField(struct BpMessageFieldDescriptor *descriptor,
+void BpEndecodeMessageField(const struct BpMessageFieldDescriptor *descriptor,
                             struct BpProcessorContext *ctx, void *data) {
     switch (descriptor->type.flag) {
         case BP_TYPE_BOOL:
@@ -123,7 +123,7 @@ void BpEndecodeMessageField(struct BpMessageFieldDescriptor *descriptor,
 // descriptor. It simply propagates the process to the type it alias to.
 // In bitproto, only types without names can be aliased
 // (bool/int/uint/byte/array).
-void BpEndecodeAlias(struct BpAliasDescriptor *descriptor,
+void BpEndecodeAlias(const struct BpAliasDescriptor *descriptor,
                      struct BpProcessorContext *ctx, void *data) {
     switch (descriptor->to.flag) {
         case BP_TYPE_BOOL:
@@ -143,7 +143,7 @@ void BpEndecodeAlias(struct BpAliasDescriptor *descriptor,
 
 // BpEndecodeArray process given array at data with provided descriptor. It
 // iterates all array elements to process.
-void BpEndecodeArray(struct BpArrayDescriptor *descriptor,
+void BpEndecodeArray(const struct BpArrayDescriptor *descriptor,
                      struct BpProcessorContext *ctx, void *data) {
     // Keep current number of bits total processed.
     int i = ctx->i;
@@ -163,7 +163,7 @@ void BpEndecodeArray(struct BpArrayDescriptor *descriptor,
     int cap = descriptor->cap;
     int element_nbits = descriptor->element_type.nbits;
     int element_size = descriptor->element_type.size;
-    struct BpType *element_type = &(descriptor->element_type);
+    const struct BpType *element_type = &(descriptor->element_type);
 
     int flag = element_type->flag;
     // The type flag behind if the element_type is an alias.
@@ -436,7 +436,7 @@ void BpEndecodeInt(int size, int nbits, struct BpProcessorContext *ctx,
 
 // BpEncodeArrayExtensibleAhead encode the array capacity as the ahead flag
 // to current bit encoding stream.
-void BpEncodeArrayExtensibleAhead(struct BpArrayDescriptor *descriptor,
+void BpEncodeArrayExtensibleAhead(const struct BpArrayDescriptor *descriptor,
                                   struct BpProcessorContext *ctx) {
     // Safe to cast to uint16_t:
     // the capacity of an array always <= 65535.
@@ -446,7 +446,7 @@ void BpEncodeArrayExtensibleAhead(struct BpArrayDescriptor *descriptor,
 
 // BpDecodeArrayExtensibleAhead decode the ahead flag as the array capacity
 // from current bit decoding buffer.
-uint16_t BpDecodeArrayExtensibleAhead(struct BpArrayDescriptor *descriptor,
+uint16_t BpDecodeArrayExtensibleAhead(const struct BpArrayDescriptor *descriptor,
                                       struct BpProcessorContext *ctx) {
     uint16_t data = 0;
     BpEndecodeBaseType(16, ctx, (void *)&data);
@@ -455,7 +455,7 @@ uint16_t BpDecodeArrayExtensibleAhead(struct BpArrayDescriptor *descriptor,
 
 // BpEncodeMessageExtensibleAhead encode the message number of bits as the
 // ahead flag to current bit encoding stream.
-void BpEncodeMessageExtensibleAhead(struct BpMessageDescriptor *descriptor,
+void BpEncodeMessageExtensibleAhead(const struct BpMessageDescriptor *descriptor,
                                     struct BpProcessorContext *ctx) {
     // Safe to cast to uint16_t:
     // The bitproto compiler constraints message size up to 65535 bits.
@@ -465,7 +465,7 @@ void BpEncodeMessageExtensibleAhead(struct BpMessageDescriptor *descriptor,
 
 // BpDecodeMessageExtensibleAhead decode the ahead flag as message's number
 // of bits from current decoding buffer.
-uint16_t BpDecodeMessageExtensibleAhead(struct BpMessageDescriptor *descriptor,
+uint16_t BpDecodeMessageExtensibleAhead(const struct BpMessageDescriptor *descriptor,
                                         struct BpProcessorContext *ctx) {
     uint16_t data = 0;
     BpEndecodeBaseType(16, ctx, (void *)&data);
@@ -484,7 +484,7 @@ void BpJsonFormatString(struct BpJsonFormatContext *ctx, const char *format,
 
 // BpJsonFormatMessage formats the message with given descriptor to json
 // format string and writes the formatted string into buffer given by ctx.
-void BpJsonFormatMessage(struct BpMessageDescriptor *descriptor,
+void BpJsonFormatMessage(const struct BpMessageDescriptor *descriptor,
                          struct BpJsonFormatContext *ctx, void *data) {
     // Formats left brace.
     BpJsonFormatString(ctx, "{");
@@ -507,7 +507,7 @@ void BpJsonFormatMessage(struct BpMessageDescriptor *descriptor,
 
 // BpJsonFormatMessageField formats a message field with given descriptor to
 // json format into target buffer in given ctx.
-void BpJsonFormatMessageField(struct BpMessageFieldDescriptor *descriptor,
+void BpJsonFormatMessageField(const struct BpMessageFieldDescriptor *descriptor,
                               struct BpJsonFormatContext *ctx) {
     // Format key.
     BpJsonFormatString(ctx, "\"%s\":", descriptor->name);
@@ -576,7 +576,7 @@ void BpJsonFormatBaseType(int flag, int nbits, struct BpJsonFormatContext *ctx,
 }
 
 // BpJsonFormatAlias formats an alias with given descriptor to json format.
-void BpJsonFormatAlias(struct BpAliasDescriptor *descriptor,
+void BpJsonFormatAlias(const struct BpAliasDescriptor *descriptor,
                        struct BpJsonFormatContext *ctx, void *data) {
     int flag = descriptor->to.flag;
     switch (flag) {
@@ -593,7 +593,7 @@ void BpJsonFormatAlias(struct BpAliasDescriptor *descriptor,
 }
 
 // BpJsonFormatArray formats an array with given descriptor to json format.
-void BpJsonFormatArray(struct BpArrayDescriptor *descriptor,
+void BpJsonFormatArray(const struct BpArrayDescriptor *descriptor,
                        struct BpJsonFormatContext *ctx, void *data) {
     BpJsonFormatString(ctx, "[");
 

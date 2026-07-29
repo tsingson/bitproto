@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stddef.h>
 
 #include "example_bp.h"
 
@@ -18,11 +19,13 @@ int main(void) {
 
     unsigned char s[BYTES_LENGTH_DRONE] = {0};
 
-    EncodeDrone(&drone, s);
+    size_t payload_len = EncodeDrone(&drone, s);
+    assert(payload_len == BYTES_LENGTH_DRONE);
 
     // Decode.
     struct Drone drone_new = {0};
-    DecodeDrone(&drone_new, s);
+    size_t payload_len_decoded = DecodeDrone(&drone_new, s);
+    assert(payload_len_decoded == BYTES_LENGTH_DRONE);
 
     assert(drone_new.status == drone.status);
 

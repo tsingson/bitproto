@@ -280,6 +280,26 @@ def test_parse_2d_array() -> None:
     assert message_a.fields()[0].type is alias_matrix
 
 
+def test_parse_float_double_as_fixed_int32() -> None:
+    proto = parse(bitproto_filepath("float_double.bitproto"))
+    reading = cast_or_raise(Message, proto.get_member("Reading"))
+
+    field_temperature = cast_or_raise(MessageField, reading.get_member("temperature"))
+    field_humidity = cast_or_raise(MessageField, reading.get_member("humidity"))
+    field_history = cast_or_raise(MessageField, reading.get_member("history"))
+
+    assert isinstance(field_temperature.type, Int)
+    assert field_temperature.type.cap == 32
+    assert isinstance(field_humidity.type, Int)
+    assert field_humidity.type.cap == 32
+    assert isinstance(field_history.type, Array)
+
+    history = cast_or_raise(Array, field_history.type)
+    assert isinstance(history.element_type, Int)
+    assert history.element_type.cap == 32
+    assert history.nbits() == 3 * 32
+
+
 def test_parse_2d_array_e() -> None:
     with pytest.raises(GrammarError):
         parse(bitproto_filepath("_2d_array_e.bitproto"))

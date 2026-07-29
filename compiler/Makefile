@@ -20,3 +20,15 @@ build-pip-package: clean-pip-package
 
 upload-pip-package: build-pip-package
 	uv publish
+
+build-go-compiler:
+	cd ../compiler-go && go build -o ../dist/bitproto-go .
+
+verify-go-compiler-c:
+	bash ../scripts/validate_go_compiler_c.sh
+
+verify-go-compiler-go:
+	bash ../scripts/validate_go_compiler_go.sh
+
+verify-go-compiler-interop:
+	bash ../scripts/verify_go_compiler_interop.sh

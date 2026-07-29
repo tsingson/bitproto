@@ -98,6 +98,7 @@ func (m *Uint8Accessor) BpSetByte(di *DataIndexer, lshift int, b byte) {
 		m.data |= (uint8(b) << lshift)
 	}
 }
+
 func (m *Uint8Accessor) BpGetByte(di *DataIndexer, rshift int) byte {
 	switch di.F() {
 	case 1:
@@ -118,6 +119,7 @@ func (m *Uint16Accessor) BpSetByte(di *DataIndexer, lshift int, b byte) {
 		m.data |= (uint16(b) << lshift)
 	}
 }
+
 func (m *Uint16Accessor) BpGetByte(di *DataIndexer, rshift int) byte {
 	switch di.F() {
 	case 1:
@@ -459,7 +461,6 @@ func getNbitsToCopy(i, j, n int) int {
 func getMask(k, c int) int {
 	if k == 0 {
 		return (1 << c) - 1
-
 	}
 	return (1 << ((k + 1 + c) - 1)) - (1 << ((k + 1) - 1))
 }
@@ -468,7 +469,6 @@ func getMask(k, c int) int {
 func min(a, b int) int {
 	if a < b {
 		return a
-
 	}
 	return b
 }

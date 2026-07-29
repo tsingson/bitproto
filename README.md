@@ -156,6 +156,25 @@ struct Box {
 
 You can checkout directory [example](example) for a larger example.
 
+## Float And Double Note
+
+Bitproto now accepts `float` and `double` in schema definitions.
+
+Wire/storage rule:
+- Both `float` and `double` are encoded as signed `int32` fixed-point values.
+- Scale factor is `1e8` (8 decimal places).
+
+Conversion:
+- store: `round(value * 100000000)` with int32 saturation
+- load: `stored / 100000000`
+
+Effective value range with 8 decimals is approximately:
+- min: `-21.47483648`
+- max: `21.47483647`
+
+Native generated code also includes helper APIs for these fixed-point fields
+in C/Go/Python targets.
+
 ## Why bitproto ?
 
 There is protobuf, why bitproto?
@@ -241,6 +260,13 @@ Documentation:
 - Documentation in Chinese: [https://bitproto.readthedocs.io/zh/latest](https://bitproto.readthedocs.io/zh/latest)
 - [Quick start tutorial](https://bitproto.readthedocs.io/en/latest/quickstart.html)
 - [Grammar guide, in one page](https://bitproto.readthedocs.io/en/latest/language.html)
+
+Verification guides:
+
+- [bitproto syntax and limits guide](bitproto_guide.md)
+- [bitproto native c/go/py verification guide](bitproto_verify_guide.md)
+- [bitproto C-to-Go TCP/IP framing and anti-sticky-packet guide](bitproto-c-to-go-tcpip-guide.md)
+- [float/double fixed-point demo](example/float-fixed-point/README.md)
 
 Editor syntax highlighting plugins:
 

@@ -70,6 +70,28 @@ jobs:
       run: |
         make test --no-print-directory -s
 
+    - name: Verify go-compiler outputs and interop
+      run: |
+        make -C compiler verify-go-compiler-c --no-print-directory -s
+        make -C compiler verify-go-compiler-go --no-print-directory -s
+        make -C compiler verify-go-compiler-interop --no-print-directory -s
+      if: "matrix.python == '3.11'"
+
+    - name: Verify TCP/IP C<->Go framing case
+      run: |
+        pytest tests/test_encoding/test_tcpip.py -v -s -x
+      if: "matrix.python == '3.11'"
+
+    - name: Verify native c/go/py three-end interop stress
+      run: |
+        python tests/test_encoding/test_native_interop.py
+      if: "matrix.python == '3.11'"
+
+    - name: Verify float/double fixed-point demo
+      run: |
+        python example/float-fixed-point/run_demo.py
+      if: "matrix.python == '3.11'"
+
   big-endian:
 
     runs-on: ubuntu-24.04

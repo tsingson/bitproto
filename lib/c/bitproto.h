@@ -155,7 +155,7 @@ struct BpMessageFieldDescriptor {
     struct BpType type;
     // Name of this field.
     // Required for json formatter.
-    char *name;
+    const char *name;
 };
 
 // BpMessageDescriptor describes a message.
@@ -183,40 +183,40 @@ void BpHandleIntSignAfterEndecode(int size, int nbits,
 void BpEndecodeBaseType(int nbits, struct BpProcessorContext *ctx, void *data);
 void BpEndecodeInt(int nbits, int size, struct BpProcessorContext *ctx,
                    void *data);
-void BpEndecodeMessageField(struct BpMessageFieldDescriptor *descriptor,
+void BpEndecodeMessageField(const struct BpMessageFieldDescriptor *descriptor,
                             struct BpProcessorContext *ctx, void *data);
-void BpEndecodeMessage(struct BpMessageDescriptor *descriptor,
+void BpEndecodeMessage(const struct BpMessageDescriptor *descriptor,
                        struct BpProcessorContext *ctx, void *data);
-void BpEndecodeAlias(struct BpAliasDescriptor *descriptor,
+void BpEndecodeAlias(const struct BpAliasDescriptor *descriptor,
                      struct BpProcessorContext *ctx, void *data);
-void BpEndecodeArray(struct BpArrayDescriptor *descriptor,
+void BpEndecodeArray(const struct BpArrayDescriptor *descriptor,
                      struct BpProcessorContext *ctx, void *data);
 
 // Extensible Processor.
 
-void BpEncodeArrayExtensibleAhead(struct BpArrayDescriptor *descriptor,
+void BpEncodeArrayExtensibleAhead(const struct BpArrayDescriptor *descriptor,
                                   struct BpProcessorContext *ctx);
-uint16_t BpDecodeArrayExtensibleAhead(struct BpArrayDescriptor *descriptor,
+uint16_t BpDecodeArrayExtensibleAhead(const struct BpArrayDescriptor *descriptor,
                                       struct BpProcessorContext *ctx);
 
-void BpEncodeMessageExtensibleAhead(struct BpMessageDescriptor *descriptor,
+void BpEncodeMessageExtensibleAhead(const struct BpMessageDescriptor *descriptor,
                                     struct BpProcessorContext *ctx);
-uint16_t BpDecodeMessageExtensibleAhead(struct BpMessageDescriptor *descriptor,
+uint16_t BpDecodeMessageExtensibleAhead(const struct BpMessageDescriptor *descriptor,
                                         struct BpProcessorContext *ctx);
 
 // Json Formatting
 
 void BpJsonFormatString(struct BpJsonFormatContext *ctx, const char *format,
                         ...);
-void BpJsonFormatMessage(struct BpMessageDescriptor *descriptor,
+void BpJsonFormatMessage(const struct BpMessageDescriptor *descriptor,
                          struct BpJsonFormatContext *ctx, void *data);
 void BpJsonFormatBaseType(int flag, int nbits, struct BpJsonFormatContext *ctx,
                           void *data);
-void BpJsonFormatAlias(struct BpAliasDescriptor *descriptor,
+void BpJsonFormatAlias(const struct BpAliasDescriptor *descriptor,
                        struct BpJsonFormatContext *ctx, void *data);
-void BpJsonFormatMessageField(struct BpMessageFieldDescriptor *descriptor,
+void BpJsonFormatMessageField(const struct BpMessageFieldDescriptor *descriptor,
                               struct BpJsonFormatContext *ctx);
-void BpJsonFormatArray(struct BpArrayDescriptor *descriptor,
+void BpJsonFormatArray(const struct BpArrayDescriptor *descriptor,
                        struct BpJsonFormatContext *ctx, void *data);
 
 #if defined(__cplusplus)

@@ -38,7 +38,10 @@ following:
        uint8_t b : 3;
        uint8_t c : 5;
        uint8_t d : 7;
-   } __attribute__((packed, aligned(1))); // this line matters
+      };
+
+      // For strict C17-oriented output, bitproto avoids compiler-specific packed
+      // attributes in generated code.
 
    struct Data d = {1, 5, 28, 70};
    unsigned char *s = (unsigned char *)(&d);

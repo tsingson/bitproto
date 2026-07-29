@@ -4,10 +4,10 @@
 package drone
 
 import (
-	"strconv"
 	"encoding/json"
+	"strconv"
 
-	bp "github.com/hit9/bitproto/lib/go"
+	bp "github.com/tsingson/bitproto/lib/go"
 )
 
 // Avoid possible golang import not used error
@@ -31,10 +31,10 @@ type DroneStatus uint8 // 3bit
 
 const (
 	DRONE_STATUS_UNKNOWN DroneStatus = 0
-	DRONE_STATUS_STANDBY = 1
-	DRONE_STATUS_RISING = 2
-	DRONE_STATUS_LANDING = 3
-	DRONE_STATUS_FLYING = 4
+	DRONE_STATUS_STANDBY             = 1
+	DRONE_STATUS_RISING              = 2
+	DRONE_STATUS_LANDING             = 3
+	DRONE_STATUS_FLYING              = 4
 )
 
 func (m DroneStatus) BpProcessor() bp.Processor {
@@ -62,9 +62,9 @@ func (v DroneStatus) String() string {
 type PropellerStatus uint8 // 2bit
 
 const (
-	PROPELLER_STATUS_UNKNOWN PropellerStatus = 0
-	PROPELLER_STATUS_IDLE = 1
-	PROPELLER_STATUS_ROTATING = 2
+	PROPELLER_STATUS_UNKNOWN  PropellerStatus = 0
+	PROPELLER_STATUS_IDLE                     = 1
+	PROPELLER_STATUS_ROTATING                 = 2
 )
 
 func (m PropellerStatus) BpProcessor() bp.Processor {
@@ -88,9 +88,9 @@ func (v PropellerStatus) String() string {
 type RotatingDirection uint8 // 2bit
 
 const (
-	ROTATING_DIRECTION_UNKNOWN RotatingDirection = 0
-	ROTATING_DIRECTION_CLOCK_WISE = 1
-	ROTATING_DIRECTION_ANTI_CLOCK_WISE = 2
+	ROTATING_DIRECTION_UNKNOWN         RotatingDirection = 0
+	ROTATING_DIRECTION_CLOCK_WISE                        = 1
+	ROTATING_DIRECTION_ANTI_CLOCK_WISE                   = 2
 )
 
 func (m RotatingDirection) BpProcessor() bp.Processor {
@@ -115,8 +115,8 @@ type PowerStatus uint8 // 2bit
 
 const (
 	POWER_STATUS_UNKNOWN PowerStatus = 0
-	POWER_STATUS_OFF = 1
-	POWER_STATUS_ON = 2
+	POWER_STATUS_OFF                 = 1
+	POWER_STATUS_ON                  = 2
 )
 
 func (m PowerStatus) BpProcessor() bp.Processor {
@@ -140,9 +140,9 @@ func (v PowerStatus) String() string {
 type LandingGearStatus uint8 // 2bit
 
 const (
-	LANDING_GEAR_STATUS_UNKNOWN LandingGearStatus = 0
-	LANDING_GEAR_STATUS_UNFOLDED = 1
-	LANDING_GEAR_STATUS_FOLDED = 2
+	LANDING_GEAR_STATUS_UNKNOWN  LandingGearStatus = 0
+	LANDING_GEAR_STATUS_UNFOLDED                   = 1
+	LANDING_GEAR_STATUS_FOLDED                     = 2
 )
 
 func (m LandingGearStatus) BpProcessor() bp.Processor {
@@ -164,8 +164,8 @@ func (v LandingGearStatus) String() string {
 }
 
 type Propeller struct {
-	Id uint8 `json:"id"` // 8bit
-	Status PropellerStatus `json:"status"` // 2bit
+	Id        uint8             `json:"id"`        // 8bit
+	Status    PropellerStatus   `json:"status"`    // 2bit
 	Direction RotatingDirection `json:"direction"` // 2bit
 }
 
@@ -204,47 +204,47 @@ func (m *Propeller) BpProcessor() bp.Processor {
 func (m *Propeller) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	switch di.F() {
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *Propeller) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 1:
-			m.Id |= (uint8(b) << lshift)
-		case 2:
-			m.Status |= (PropellerStatus(b) << lshift)
-		case 3:
-			m.Direction |= (RotatingDirection(b) << lshift)
-		default:
-			return
+	case 1:
+		m.Id |= (uint8(b) << lshift)
+	case 2:
+		m.Status |= (PropellerStatus(b) << lshift)
+	case 3:
+		m.Direction |= (RotatingDirection(b) << lshift)
+	default:
+		return
 	}
 }
 
 func (m *Propeller) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 1:
-			return byte(m.Id >> rshift)
-		case 2:
-			return byte(m.Status >> rshift)
-		case 3:
-			return byte(m.Direction >> rshift)
-		default:
-			return byte(0) // Won't reached
+	case 1:
+		return byte(m.Id >> rshift)
+	case 2:
+		return byte(m.Status >> rshift)
+	case 3:
+		return byte(m.Direction >> rshift)
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *Propeller) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		default:
-			return
+	default:
+		return
 	}
 }
 
 type Power struct {
-	Battery uint8 `json:"battery"` // 8bit
-	Status PowerStatus `json:"status"` // 2bit
-	IsCharging bool `json:"is_charging"` // 1bit
+	Battery    uint8       `json:"battery"`     // 8bit
+	Status     PowerStatus `json:"status"`      // 2bit
+	IsCharging bool        `json:"is_charging"` // 1bit
 }
 
 // Number of bytes to serialize struct Power
@@ -282,40 +282,40 @@ func (m *Power) BpProcessor() bp.Processor {
 func (m *Power) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	switch di.F() {
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *Power) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 1:
-			m.Battery |= (uint8(b) << lshift)
-		case 2:
-			m.Status |= (PowerStatus(b) << lshift)
-		case 3:
-			m.IsCharging = bp.Byte2bool(b)
-		default:
-			return
+	case 1:
+		m.Battery |= (uint8(b) << lshift)
+	case 2:
+		m.Status |= (PowerStatus(b) << lshift)
+	case 3:
+		m.IsCharging = bp.Byte2bool(b)
+	default:
+		return
 	}
 }
 
 func (m *Power) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 1:
-			return byte(m.Battery >> rshift)
-		case 2:
-			return byte(m.Status >> rshift)
-		case 3:
-			return bp.Bool2byte(m.IsCharging) >> rshift
-		default:
-			return byte(0) // Won't reached
+	case 1:
+		return byte(m.Battery >> rshift)
+	case 2:
+		return byte(m.Status >> rshift)
+	case 3:
+		return bp.Bool2byte(m.IsCharging) >> rshift
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *Power) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		default:
-			return
+	default:
+		return
 	}
 }
 
@@ -360,36 +360,36 @@ func (m *Network) BpProcessor() bp.Processor {
 func (m *Network) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	switch di.F() {
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *Network) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 1:
-			m.Signal |= (uint8(b) << lshift)
-		case 2:
-			m.HeartbeatAt |= (Timestamp(b) << lshift)
-		default:
-			return
+	case 1:
+		m.Signal |= (uint8(b) << lshift)
+	case 2:
+		m.HeartbeatAt |= (Timestamp(b) << lshift)
+	default:
+		return
 	}
 }
 
 func (m *Network) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 1:
-			return byte(m.Signal >> rshift)
-		case 2:
-			return byte(m.HeartbeatAt >> rshift)
-		default:
-			return byte(0) // Won't reached
+	case 1:
+		return byte(m.Signal >> rshift)
+	case 2:
+		return byte(m.HeartbeatAt >> rshift)
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *Network) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		default:
-			return
+	default:
+		return
 	}
 }
 
@@ -430,39 +430,39 @@ func (m *LandingGear) BpProcessor() bp.Processor {
 func (m *LandingGear) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	switch di.F() {
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *LandingGear) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 1:
-			m.Status |= (LandingGearStatus(b) << lshift)
-		default:
-			return
+	case 1:
+		m.Status |= (LandingGearStatus(b) << lshift)
+	default:
+		return
 	}
 }
 
 func (m *LandingGear) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 1:
-			return byte(m.Status >> rshift)
-		default:
-			return byte(0) // Won't reached
+	case 1:
+		return byte(m.Status >> rshift)
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *LandingGear) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		default:
-			return
+	default:
+		return
 	}
 }
 
 type Position struct {
-	Latitude uint32 `json:"latitude"` // 32bit
+	Latitude  uint32 `json:"latitude"`  // 32bit
 	Longitude uint32 `json:"longitude"` // 32bit
-	Altitude uint32 `json:"altitude"` // 32bit
+	Altitude  uint32 `json:"altitude"`  // 32bit
 }
 
 // Number of bytes to serialize struct Position
@@ -500,48 +500,48 @@ func (m *Position) BpProcessor() bp.Processor {
 func (m *Position) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	switch di.F() {
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *Position) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 1:
-			m.Latitude |= (uint32(b) << lshift)
-		case 2:
-			m.Longitude |= (uint32(b) << lshift)
-		case 3:
-			m.Altitude |= (uint32(b) << lshift)
-		default:
-			return
+	case 1:
+		m.Latitude |= (uint32(b) << lshift)
+	case 2:
+		m.Longitude |= (uint32(b) << lshift)
+	case 3:
+		m.Altitude |= (uint32(b) << lshift)
+	default:
+		return
 	}
 }
 
 func (m *Position) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 1:
-			return byte(m.Latitude >> rshift)
-		case 2:
-			return byte(m.Longitude >> rshift)
-		case 3:
-			return byte(m.Altitude >> rshift)
-		default:
-			return byte(0) // Won't reached
+	case 1:
+		return byte(m.Latitude >> rshift)
+	case 2:
+		return byte(m.Longitude >> rshift)
+	case 3:
+		return byte(m.Altitude >> rshift)
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *Position) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		default:
-			return
+	default:
+		return
 	}
 }
 
 // Pose in flight. https://en.wikipedia.org/wiki/Aircraft_principal_axes
 type Pose struct {
-	Yaw int32 `json:"yaw"` // 32bit
+	Yaw   int32 `json:"yaw"`   // 32bit
 	Pitch int32 `json:"pitch"` // 32bit
-	Roll int32 `json:"roll"` // 32bit
+	Roll  int32 `json:"roll"`  // 32bit
 }
 
 // Number of bytes to serialize struct Pose
@@ -579,40 +579,40 @@ func (m *Pose) BpProcessor() bp.Processor {
 func (m *Pose) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	switch di.F() {
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *Pose) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 1:
-			m.Yaw |= (int32(b) << lshift)
-		case 2:
-			m.Pitch |= (int32(b) << lshift)
-		case 3:
-			m.Roll |= (int32(b) << lshift)
-		default:
-			return
+	case 1:
+		m.Yaw |= (int32(b) << lshift)
+	case 2:
+		m.Pitch |= (int32(b) << lshift)
+	case 3:
+		m.Roll |= (int32(b) << lshift)
+	default:
+		return
 	}
 }
 
 func (m *Pose) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 1:
-			return byte(m.Yaw >> rshift)
-		case 2:
-			return byte(m.Pitch >> rshift)
-		case 3:
-			return byte(m.Roll >> rshift)
-		default:
-			return byte(0) // Won't reached
+	case 1:
+		return byte(m.Yaw >> rshift)
+	case 2:
+		return byte(m.Pitch >> rshift)
+	case 3:
+		return byte(m.Roll >> rshift)
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *Pose) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		default:
-			return
+	default:
+		return
 	}
 }
 
@@ -661,36 +661,36 @@ func (m *Flight) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	case 1:
 		return &(m.Pose)
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *Flight) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 2:
-			m.Velocity[di.I(0)] |= (int32(b) << lshift)
-		case 3:
-			m.Acceleration[di.I(0)] |= (int32(b) << lshift)
-		default:
-			return
+	case 2:
+		m.Velocity[di.I(0)] |= (int32(b) << lshift)
+	case 3:
+		m.Acceleration[di.I(0)] |= (int32(b) << lshift)
+	default:
+		return
 	}
 }
 
 func (m *Flight) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 2:
-			return byte(m.Velocity[di.I(0)] >> rshift)
-		case 3:
-			return byte(m.Acceleration[di.I(0)] >> rshift)
-		default:
-			return byte(0) // Won't reached
+	case 2:
+		return byte(m.Velocity[di.I(0)] >> rshift)
+	case 3:
+		return byte(m.Acceleration[di.I(0)] >> rshift)
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *Flight) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		default:
-			return
+	default:
+		return
 	}
 }
 
@@ -731,46 +731,46 @@ func (m *PressureSensor) BpProcessor() bp.Processor {
 func (m *PressureSensor) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	switch di.F() {
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *PressureSensor) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 1:
-			m.Pressures[di.I(0)] |= (int32(b) << lshift)
-		default:
-			return
+	case 1:
+		m.Pressures[di.I(0)] |= (int32(b) << lshift)
+	default:
+		return
 	}
 }
 
 func (m *PressureSensor) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 1:
-			return byte(m.Pressures[di.I(0)] >> rshift)
-		default:
-			return byte(0) // Won't reached
+	case 1:
+		return byte(m.Pressures[di.I(0)] >> rshift)
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *PressureSensor) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		case 1:
-			m.Pressures[di.I(0)] <<= 8
-			m.Pressures[di.I(0)] >>= 8
-		default:
-			return
+	case 1:
+		m.Pressures[di.I(0)] <<= 8
+		m.Pressures[di.I(0)] >>= 8
+	default:
+		return
 	}
 }
 
 type Drone struct {
-	Status DroneStatus `json:"status"` // 3bit
-	Position Position `json:"position"` // 96bit
-	Flight Flight `json:"flight"` // 288bit
-	Propellers [4]Propeller `json:"propellers"` // 48bit
-	Power Power `json:"power"` // 11bit
-	Network Network `json:"network"` // 36bit
-	LandingGear LandingGear `json:"landing_gear"` // 2bit
+	Status         DroneStatus    `json:"status"`          // 3bit
+	Position       Position       `json:"position"`        // 96bit
+	Flight         Flight         `json:"flight"`          // 288bit
+	Propellers     [4]Propeller   `json:"propellers"`      // 48bit
+	Power          Power          `json:"power"`           // 11bit
+	Network        Network        `json:"network"`         // 36bit
+	LandingGear    LandingGear    `json:"landing_gear"`    // 2bit
 	PressureSensor PressureSensor `json:"pressure_sensor"` // 48bit
 }
 
@@ -828,31 +828,31 @@ func (m *Drone) BpGetAccessor(di *bp.DataIndexer) bp.Accessor {
 	case 8:
 		return &(m.PressureSensor)
 	default:
-		return nil  // Won't reached
+		return nil // Won't reached
 	}
 }
 
 func (m *Drone) BpSetByte(di *bp.DataIndexer, lshift int, b byte) {
 	switch di.F() {
-		case 1:
-			m.Status |= (DroneStatus(b) << lshift)
-		default:
-			return
+	case 1:
+		m.Status |= (DroneStatus(b) << lshift)
+	default:
+		return
 	}
 }
 
 func (m *Drone) BpGetByte(di *bp.DataIndexer, rshift int) byte {
 	switch di.F() {
-		case 1:
-			return byte(m.Status >> rshift)
-		default:
-			return byte(0) // Won't reached
+	case 1:
+		return byte(m.Status >> rshift)
+	default:
+		return byte(0) // Won't reached
 	}
 }
 
 func (m *Drone) BpProcessInt(di *bp.DataIndexer) {
 	switch di.F() {
-		default:
-			return
+	default:
+		return
 	}
 }

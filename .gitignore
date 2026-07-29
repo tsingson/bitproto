@@ -25,3 +25,7 @@ test2
 # Tooling and lockfiles
 .code-symbol-index/
 uv.lock
+
+.idea/
+.vscode/
+.code/
