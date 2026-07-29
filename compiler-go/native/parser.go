@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var topLevelKeywords = map[string]bool{
@@ -74,9 +75,11 @@ func (p *parser) parseProto() (*Proto, error) {
 			}
 			out.Messages = append(out.Messages, m)
 		case "const":
-			if err := p.parseConst(); err != nil {
+			c, err := p.parseConst()
+			if err != nil {
 				return nil, err
 			}
+			out.Consts = append(out.Consts, c)
 		case "option":
 			if err := p.parseOption(); err != nil {
 				return nil, err
@@ -203,7 +206,7 @@ func (p *parser) parseMessage() (Message, error) {
 				}
 				continue
 			case "const":
-				if err := p.parseConst(); err != nil {
+				if _, err := p.parseConst(); err != nil {
 					return Message{}, err
 				}
 				continue
@@ -276,29 +279,49 @@ func (p *parser) parseTypeExpr() (TypeExpr, error) {
 	return t, nil
 }
 
-func (p *parser) parseConst() error {
+func (p *parser) parseConst() (Const, error) {
 	if err := p.expectIdent("const"); err != nil {
-		return err
+		return Const{}, err
 	}
-	if _, err := p.expectAnyIdent(); err != nil {
-		return err
+	name, err := p.expectAnyIdent()
+	if err != nil {
+		return Const{}, err
 	}
 	if err := p.expect(tokenAssign); err != nil {
-		return err
+		return Const{}, err
 	}
 	startLine := p.cur.line
+	var value strings.Builder
 	for p.cur.kind != tokenEOF {
 		if p.cur.kind == tokenSemi {
-			return p.expect(tokenSemi)
+			if err := p.expect(tokenSemi); err != nil {
+				return Const{}, err
+			}
+			break
 		}
 		if p.cur.kind == tokenIdent && topLevelKeywords[p.cur.lit] && p.cur.line > startLine {
-			return nil
+			break
+		}
+		if p.cur.kind == tokenString {
+			value.WriteString("\"")
+			value.WriteString(p.cur.lit)
+			value.WriteString("\"")
+		} else {
+			value.WriteString(p.cur.lit)
 		}
 		if err := p.next(); err != nil {
-			return err
+			return Const{}, err
 		}
 	}
-	return nil
+	c := Const{Name: name, Value: strings.TrimSpace(value.String())}
+	if c.Value == "true" || c.Value == "false" {
+		c.Type = "bool"
+	} else if strings.HasPrefix(c.Value, "\"") && strings.HasSuffix(c.Value, "\"") {
+		c.Type = "string"
+	} else {
+		c.Type = "int"
+	}
+	return c, nil
 }
 
 func (p *parser) parseOption() error {

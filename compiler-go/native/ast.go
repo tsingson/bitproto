@@ -4,6 +4,7 @@ type Proto struct {
 	Name     string
 	Aliases  []Alias
 	Enums    []Enum
+	Consts   []Const
 	Messages []Message
 }
 
@@ -21,6 +22,12 @@ type Enum struct {
 type EnumField struct {
 	Name  string
 	Value int
+}
+
+type Const struct {
+	Name  string
+	Value string
+	Type  string
 }
 
 type Message struct {
